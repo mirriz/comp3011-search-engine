@@ -1,5 +1,7 @@
 import re
 from collections import defaultdict
+import json
+import os
 
 class InvertedIndex:
     """
@@ -34,3 +36,29 @@ class InvertedIndex:
         """Returns the built index as a standard dictionary."""
         # Convert the defaultdicts back to standard dicts for clean storage later
         return {word: dict(urls) for word, urls in self.index.items()}
+    
+    def save(self, filepath: str):
+        """Saves the compiled index to the file system using JSON."""
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(self.get_index(), f, indent=4)
+        print(f"Index successfully saved to {filepath}")
+
+    def load(self, filepath: str):
+        """Loads the index from the file system."""
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                loaded_data = json.load(f)
+                
+            # Reconstruct our defaultdict structure
+            self.index.clear()
+            for word, urls in loaded_data.items():
+                for url, stats in urls.items():
+                    self.index[word][url] = stats
+            print(f"Index successfully loaded from {filepath}")
+            
+        except FileNotFoundError:
+            print(f"Error: Could not find index file at {filepath}. Have you run 'build' yet?")
+        except json.JSONDecodeError:
+            print("Error: The index file is corrupted.")
