@@ -2,6 +2,7 @@ import cmd
 from crawler import WebCrawler
 from indexer import InvertedIndex
 from search import SearchEngine
+import time
 
 class SearchEngineShell(cmd.Cmd):
     intro = '\nWelcome to the COMP3011 Search Engine Tool.\nType help or ? to list commands.\n'
@@ -99,12 +100,15 @@ class SearchEngineShell(cmd.Cmd):
         suggestion = searcher.suggest_query(arg)
         if suggestion:
             print(f"  [!] Did you mean: '{suggestion}'?")
+        start_time = time.perf_counter()
         results = searcher.find_query(arg)
+        end_time = time.perf_counter()
         
         if not results:
             print(f"No pages found containing the query: '{arg}'")
         else:
-            print(f"Found {len(results)} pages matching '{arg}' (Ranked by TF-IDF):")
+            execution_time = (end_time - start_time) * 1000 # Convert to milliseconds
+            print(f"Found {len(results)} pages in {execution_time:.2f} ms (Ranked by TF-IDF):")
             for rank, (url, score) in enumerate(results, 1):
                 # Format score to 4 decimal places for clean output
                 print(f"  {rank}. {url} (Score: {score:.4f})")
