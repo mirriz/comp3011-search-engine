@@ -26,4 +26,4 @@ python src/main.py
 
 * **print** <word> - Displays raw positional statistics.
 
-* **find** <query> - Executes TF-IDF search.
+* **find** <query> - Executes TF-IDF search. Uses Levenshtein distance (via difflib) to autocorrect typos.
