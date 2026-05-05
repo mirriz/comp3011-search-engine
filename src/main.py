@@ -96,6 +96,9 @@ class SearchEngineShell(cmd.Cmd):
             return
             
         searcher = SearchEngine(self.indexer.get_index())
+        suggestion = searcher.suggest_query(arg)
+        if suggestion:
+            print(f"  [!] Did you mean: '{suggestion}'?")
         results = searcher.find_query(arg)
         
         if not results:

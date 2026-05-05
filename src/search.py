@@ -1,5 +1,6 @@
 import math
 import re
+import difflib
 
 class SearchEngine:
     """
@@ -61,3 +62,31 @@ class SearchEngine:
         # Sort documents by score in descending order
         sorted_results = sorted(document_scores.items(), key=lambda item: item[1], reverse=True)
         return sorted_results
+    
+    def suggest_query(self, query: str) -> str | None:
+        """
+        Novel Feature: Provides 'Did you mean?' query suggestions using 
+        Levenshtein distance (via difflib) for misspelled words.
+        """
+        query_words = self._tokenize(query)
+        suggested_words = []
+        correction_made = False
+
+        # Get a list of all known words in our index
+        vocabulary = list(self.index.keys())
+
+        for word in query_words:
+            if word in self.index:
+                suggested_words.append(word)
+            else:
+                # Find the closest matching word in our vocabulary
+                matches = difflib.get_close_matches(word, vocabulary, n=1, cutoff=0.7)
+                if matches:
+                    suggested_words.append(matches[0])
+                    correction_made = True
+                else:
+                    suggested_words.append(word)
+
+        if correction_made:
+            return " ".join(suggested_words)
+        return None
