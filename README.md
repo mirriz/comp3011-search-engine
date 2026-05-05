@@ -27,3 +27,9 @@ python src/main.py
 * **print** <word> - Displays raw positional statistics.
 
 * **find** <query> - Executes TF-IDF search. Uses Levenshtein distance (via difflib) to autocorrect typos.
+
+## License
+
+**© 2026 The University of Leeds and Alexander East**.
+
+This project was submitted in accordance with the requirements for the degree of BSc Computer Science (Digital & Technology Solutions) at the University of Leeds. 
