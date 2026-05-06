@@ -1,5 +1,7 @@
 import pytest
 from src.indexer import InvertedIndex
+import os
+import json
 
 class TestInvertedIndex:
     
@@ -52,3 +54,22 @@ class TestInvertedIndex:
         assert 'apple' in index
         assert index['apple'][url1]['frequency'] == 1
         assert index['apple'][url2]['frequency'] == 2
+
+    def test_save_and_load(self, indexer, tmp_path):
+        """Tests that the index can be saved to and loaded from a JSON file."""
+        # Setup mock data
+        indexer.add_document("url1", "test data")
+        
+        # Use pytest's built-in tmp_path fixture for safe file testing
+        test_file = tmp_path / "test_index.json"
+        
+        # Test saving
+        indexer.save(str(test_file))
+        assert os.path.exists(test_file)
+        
+        # Test loading into a new indexer instance
+        new_indexer = InvertedIndex()
+        new_indexer.load(str(test_file))
+        
+        assert 'test' in new_indexer.index
+        assert 'url1' in new_indexer.index['test']
