@@ -45,3 +45,13 @@ class TestSearchEngine:
         
         # url2 has BOTH 'good' and 'friends', so it should definitely be top
         assert results[0][0] == 'url2'
+    
+    def test_suggest_query(self, mock_index):
+        searcher = SearchEngine(mock_index)
+        
+        # 'goood' is misspelled, should suggest 'good'
+        suggestion = searcher.suggest_query("goood")
+        assert suggestion == "good"
+        
+        # Correctly spelled words should return None (no correction needed)
+        assert searcher.suggest_query("friends") is None
